@@ -1,48 +1,7 @@
 
 
-    create table empresa (
-       id int8 not null,
-        cnpj varchar(255) not null,
-        data_atualizacao timestamp not null,
-        data_criacao timestamp not null,
-        razao_social varchar(255) not null,
-        primary key (id)
-    );
+CREATE SEQUENCE empresa_id_seq START 1; 
 
-    create table funcionario (
-       id int8 not null,
-        cpf varchar(255) not null,
-        data_atualizacao timestamp not null,
-        data_criacao timestamp not null,
-        email varchar(255) not null,
-        nome varchar(255) not null,
-        perfil varchar(255) not null,
-        qtd_horas_almoco float4,
-        qtd_horas_trabalho_dia float4,
-        senha varchar(255) not null,
-        valor_hora numeric(19, 2),
-        empresa_id int8,
-        primary key (id)
-    );
+CREATE SEQUENCE funcionario_id_seq START 1; 
 
-    create table lancamento (
-       id int8 not null,
-        data timestamp not null,
-        data_atualizacao timestamp not null,
-        data_criacao timestamp not null,
-        descricao varchar(255),
-        localizacao varchar(255),
-        tipo varchar(255) not null,
-        funcionario_id int8,
-        primary key (id)
-    );
-
-    alter table funcionario 
-       add constraint FK4cm1kg523jlopyexjbmi6y54j 
-       foreign key (empresa_id) 
-       references empresa;
-
-    alter table lancamento 
-       add constraint FK46i4k5vl8wah7feutye9kbpi4 
-       foreign key (funcionario_id) 
-       references funcionario;
+CREATE SEQUENCE lancamento_id_seq START 1;
