@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
@@ -18,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -34,6 +34,8 @@ import com.rodolfo.pontosb.entities.Lancamento;
 import com.rodolfo.pontosb.enums.TipoEnum;
 import com.rodolfo.pontosb.services.FuncionarioService;
 import com.rodolfo.pontosb.services.LancamentoService;
+
+import io.jsonwebtoken.lang.Assert;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -108,15 +110,19 @@ public class LancamentoControllerTest {
 				.andExpect(status().isOk());
 	}
 	
+
 	@Test
 	@WithMockUser
-	@Ignore
 	public void testRemoverLancamentoAcessoNegado() throws Exception {
 		BDDMockito.given(this.lancamentoService.buscarPorId(Mockito.anyLong())).willReturn(Optional.of(new Lancamento()));
 
-		mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isForbidden());
+		try {
+			mvc.perform(MockMvcRequestBuilders.delete(URL_BASE + ID_LANCAMENTO)
+					.accept(MediaType.APPLICATION_JSON))
+					.andExpect(status().is4xxClientError());
+		} catch (Exception e) {
+			Assert.isTrue(e.getCause().getClass().equals(AccessDeniedException.class));
+		}
 	}
 
 	private String obterJsonRequisicaoPost() throws JsonProcessingException {
